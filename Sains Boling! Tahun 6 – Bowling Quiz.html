@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sains Boling! Year 6</title>
+<style>
+:root{--bg:#f3f5fb;--fg:#1a2140;--card:#fff;--ac:#2c5ee8;--bd:#d3daf0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1426;--fg:#e8ecfb;--card:#1a2140;--ac:#6d93ff;--bd:#2e3862}}
+:root[data-theme="dark"]{--bg:#0f1426;--fg:#e8ecfb;--card:#1a2140;--ac:#6d93ff;--bd:#2e3862}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Segoe UI",sans-serif}
+#app{max-width:520px;margin:0 auto;padding:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{font-size:20px;margin:6px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 12px}
+button.p{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g button{text-align:left}
+.opt{display:block;width:100%;margin:6px 0;text-align:left}
+.ok{background:#2e9d4a!important;color:#fff!important}.no{background:#d0463b!important;color:#fff!important}
+.big{font-size:54px;text-align:center;line-height:1.1}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--bd);display:inline-block;margin:1px}
+svg{max-width:100%;height:auto;display:block;margin:0 auto}svg text{fill:var(--fg);font-size:9px}
+canvas{width:100%;max-width:340px;display:block;margin:6px auto;border-radius:12px}
+table{width:100%;border-collapse:collapse}td,th{padding:5px 4px;border-bottom:1px solid var(--bd);text-align:left;font-size:14px}
+input{font:inherit;padding:9px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg);width:100%;margin:6px 0}
+</style></head><body><div id="app"></div>
+<script>
+// [emoji, EN question|BM question, correct, wrong1, wrong2]; options "EN|BM" (one text = same in both languages). Options are shuffled at play time.
+const T=[
+{e:"🔬",n:"Science Process Skills|Kemahiran Proses Sains",q:[
+["👀","Which skill uses the five senses to collect information?|Kemahiran manakah menggunakan pancaindera untuk mengumpul maklumat?","Observing|Memerhati","Predicting|Meramal","Inferring|Membuat inferens"],
+["🧲","Grouping objects by their similarities is…|Mengumpulkan objek mengikut persamaan ialah…","Classifying|Mengelas","Measuring|Mengukur","Observing|Memerhati"],
+["📏","Measuring length with a ruler uses…|Mengukur panjang dengan pembaris menggunakan…","Measuring and using numbers|Mengukur dan menggunakan nombor","Predicting|Meramal","Communicating|Berkomunikasi"],
+["🔮","Saying what will happen based on a pattern is…|Menyatakan apa yang akan berlaku berdasarkan corak ialah…","Predicting|Meramal","Observing|Memerhati","Classifying|Mengelas"],
+["🧪","A variable kept the same in an experiment is the…|Pemboleh ubah yang dikekalkan dalam eksperimen ialah…","Constant variable|Pemboleh ubah dimalarkan","Manipulated variable|Pemboleh ubah dimanipulasikan","Responding variable|Pemboleh ubah bergerak balas"],
+["📝","“More water makes plants grow taller” is a…|“Lebih banyak air menjadikan tumbuhan lebih tinggi” ialah…","Hypothesis|Hipotesis","Observation|Pemerhatian","Measurement|Ukuran"],
+["🧠","Describing how something is measured or done in your experiment is…|Memerihalkan cara sesuatu disukat atau dilakukan dalam eksperimen ialah…","Defining operationally|Mentakrif secara operasi","Hypothesising|Membuat hipotesis","Classifying|Mengelas"],
+["📈","Reading a graph to explain the pattern in data is…|Membaca graf untuk menerangkan corak data ialah…","Interpreting data|Mentafsir data","Classifying|Mengelas","Observing|Memerhati"]]},
+{e:"🥼",n:"Science Room Rules|Peraturan Bilik Sains",q:[
+["🍽️","Which is a science room rule?|Yang manakah peraturan bilik sains?","Do not eat or drink|Jangan makan atau minum","Run to finish quickly|Berlari supaya cepat siap","Taste the chemicals|Rasa bahan kimia"],
+["🙋","Before an experiment you must…|Sebelum eksperimen anda mesti…","Follow the teacher’s instructions|Ikut arahan guru","Mix all the materials|Campur semua bahan","Leave the room|Keluar dari bilik"],
+["🧼","After an experiment you should…|Selepas eksperimen anda patut…","Wash your hands|Basuh tangan","Throw waste on the floor|Buang sampah di lantai","Run outside|Lari keluar"],
+["🔥","Why be careful with a spirit lamp?|Mengapa berhati-hati dengan pelita spirit?","It can cause fire or burns|Ia boleh menyebabkan kebakaran atau melecur","It is heavy|Ia berat","It is cold|Ia sejuk"],
+["☠️","A toxic symbol on a bottle means…|Simbol toksik pada botol bermaksud…","Dangerous, handle carefully|Bahaya, kendali dengan berhati-hati","Safe to drink|Selamat diminum","A toy|Mainan"],
+["🥽","What protects your eyes in an experiment?|Apakah yang melindungi mata dalam eksperimen?","Safety goggles|Cermin mata keselamatan","Sunglasses|Cermin mata hitam","A cap|Topi"],
+["💥","If a glass tube breaks, you should…|Jika tabung kaca pecah, anda patut…","Tell the teacher at once|Beritahu guru segera","Pick it up with bare hands|Kutip dengan tangan kosong","Hide it|Sembunyikannya"],
+["⚠️","Why do we follow science room rules?|Mengapa kita patuhi peraturan bilik sains?","To stay safe and avoid accidents|Untuk selamat dan elak kemalangan","To finish faster|Untuk cepat siap","To play|Untuk bermain"]]},
+{e:"🦠",n:"Microorganisms|Mikroorganisma",q:[
+["🔬","Most microorganisms are seen only with a…|Kebanyakan mikroorganisma dilihat dengan…","Microscope|Mikroskop","Ruler|Pembaris","Torchlight|Lampu suluh"],
+["🍞","Which microorganism makes bread rise?|Mikroorganisma manakah menjadikan roti kembang?","Yeast|Yis","Amoeba","Influenza virus|Virus influenza"],
+["🧫","Amoeba and Paramecium are…|Amoeba dan Paramecium ialah…","Protozoa","Fungi|Kulat","Bacteria|Bakteria"],
+["🦷","Which causes tooth decay?|Yang manakah menyebabkan karies gigi?","Bacteria|Bakteria","Yeast|Yis","Algae|Alga"],
+["🥛","Yoghurt is made with the help of…|Yogurt dihasilkan dengan bantuan…","Bacteria|Bakteria","Algae|Alga","Viruses|Virus"],
+["🌡️","Microorganisms grow best in a place that is…|Mikroorganisma membiak paling baik di tempat yang…","Warm and moist|Hangat dan lembap","Dry and cold|Kering dan sejuk","Very hot|Sangat panas"],
+["🤧","How can we prevent flu from spreading?|Bagaimana mencegah selesema merebak?","Cover mouth when coughing|Tutup mulut semasa batuk","Share cups|Berkongsi cawan","Touch your face|Sentuh muka"],
+["💉","Antibiotics and vaccines are made with the help of…|Antibiotik dan vaksin dihasilkan dengan bantuan…","Microorganisms|Mikroorganisma","Plastics|Plastik","Metals|Logam"]]},
+{e:"🐝",n:"Interaction Among Living Things|Interaksi Antara Hidupan",q:[
+["🐜","Which animal lives in a group?|Haiwan manakah hidup berkumpulan?","Ant|Semut","Tiger|Harimau","Leopard|Harimau bintang"],
+["🐅","Which animal lives alone (solitary)?|Haiwan manakah hidup bersendirian?","Tiger|Harimau","Ant|Semut","Bee|Lebah"],
+["🦁","Two lions fighting over food is…|Dua ekor singa bergaduh merebut makanan ialah…","Competition|Persaingan","Mutualism|Mutualisme","Parasitism|Parasitisme"],
+["🐠","Clownfish and sea anemone help each other. This is…|Ikan badut dan anemon laut saling membantu. Ini ialah…","Mutualism|Mutualisme","Parasitism|Parasitisme","Competition|Persaingan"],
+["🐕","A tick sucks blood from a dog. This is…|Kutu menghisap darah anjing. Ini ialah…","Parasitism|Parasitisme","Mutualism|Mutualisme","Commensalism|Komensalisme"],
+["🦈","A remora eats the shark’s scraps; the shark is unaffected. This is…|Ikan remora makan sisa yu; yu tidak terjejas. Ini ialah…","Commensalism|Komensalisme","Mutualism|Mutualisme","Parasitism|Parasitisme"],
+["🌿","Plants compete for…|Tumbuhan bersaing untuk…","Sunlight, water, nutrients, space|Cahaya, air, nutrien, ruang","Only soil|Tanah sahaja","Only wind|Angin sahaja"],
+["🌳","An orchid grows on a tree without harming it. This is…|Orkid tumbuh pada pokok tanpa memudaratkannya. Ini ialah…","Commensalism|Komensalisme","Parasitism|Parasitisme","Competition|Persaingan"]]},
+{e:"🐼",n:"Preservation and Conservation|Pemuliharaan dan Pemeliharaan",q:[
+["🦤","The dodo is an…|Burung dodo ialah…","Extinct animal|Haiwan pupus","Endangered animal|Haiwan terancam","Pet|Haiwan peliharaan"],
+["🐅","The Malayan tiger is…|Harimau Malaya ialah…","Endangered|Terancam","Extinct|Pupus","Very common|Sangat biasa"],
+["🪓","Logging and deforestation are…|Pembalakan dan penebangan hutan ialah…","Human activities that threaten wildlife|Aktiviti manusia yang mengancam hidupan liar","Natural phenomena|Fenomena semula jadi","Helpful actions|Tindakan berguna"],
+["🌊","Which is a natural phenomenon that threatens living things?|Yang manakah fenomena semula jadi yang mengancam hidupan?","Flood|Banjir","Hunting|Pemburuan","Logging|Pembalakan"],
+["🏭","Dumping rubbish in rivers harms…|Membuang sampah ke sungai memudaratkan…","Fish and water plants|Ikan dan tumbuhan air","Nothing|Tiada apa-apa","Only birds|Burung sahaja"],
+["🛡️","Preservation means…|Pemeliharaan bermaksud…","Keeping nature untouched|Memastikan alam tidak diganggu","Using up resources|Menghabiskan sumber","Cutting forests|Menebang hutan"],
+["♻️","Conservation means…|Pemuliharaan bermaksud…","Using resources wisely|Menggunakan sumber dengan bijak","Wasting resources|Membazir sumber","Destroying habitats|Memusnahkan habitat"],
+["🌴","Which action helps conserve nature?|Tindakan manakah membantu memulihara alam?","Replanting trees, forest reserves|Menanam semula pokok, hutan simpan","Hunting for sport|Memburu untuk sukan","Burning forests|Membakar hutan"]]},
+{e:"💪",n:"Force and Friction|Daya dan Geseran",q:[
+["🏐","Force is a…|Daya ialah…","Push or a pull|Tolakan atau tarikan","Colour|Warna","Sound|Bunyi"],
+["🥅","A goalkeeper catches a moving ball. The force…|Penjaga gol menangkap bola yang bergerak. Daya itu…","Stops the ball|Memberhentikan bola","Makes it bigger|Membesarkannya","Changes its colour|Menukar warnanya"],
+["🧱","Rubbing two surfaces together produces…|Menggosok dua permukaan menghasilkan…","Friction|Geseran","Gravity|Graviti","Magnetism|Kemagnetan"],
+["🧽","Squeezing a sponge shows force can change an object’s…|Memicit span menunjukkan daya boleh mengubah… objek","Shape|Bentuk","Colour|Warna","Taste|Rasa"],
+["👟","Which surface gives the most friction?|Permukaan manakah memberi geseran paling banyak?","Rough carpet|Permaidani kasar","Ice|Ais","Polished glass|Kaca digilap"],
+["📦","A heavier box is harder to push because friction is…|Kotak lebih berat lebih sukar ditolak kerana geseran…","Greater|Lebih besar","Smaller|Lebih kecil","Zero|Sifar"],
+["🛢️","Oil on a squeaky hinge ___ friction.|Minyak pada engsel berkeriut ___ geseran.","Reduces|Mengurangkan","Increases|Menambah","Doubles|Menggandakan"],
+["🚲","Why do bicycle tyres have grooves?|Mengapa tayar basikal beralur?","To increase grip on the road|Untuk menambah cengkaman pada jalan","To reduce friction|Untuk mengurangkan geseran","To make it lighter|Untuk meringankan"]]},
+{e:"🏎️",n:"Speed|Laju",q:[
+["🏁","Speed =|Laju =","Distance ÷ time|Jarak ÷ masa","Time ÷ distance|Masa ÷ jarak","Distance × time|Jarak × masa"],
+["🚦","Which is a unit of speed?|Yang manakah unit laju?","km/h","kg","cm"],
+["🚗","A car travels 120 km in 2 h. Its speed is…|Kereta bergerak 120 km dalam 2 j. Lajunya ialah…","60 km/h","240 km/h","118 km/h"],
+["🚴","A cyclist rides 30 m in 10 s. Speed =|Penunggang basikal bergerak 30 m dalam 10 s. Laju =","3 m/s","300 m/s","20 m/s"],
+["🏃","Speed 20 m/s for 5 s. Distance =|Laju 20 m/s selama 5 s. Jarak =","100 m","25 m","4 m"],
+["🚆","A train goes 150 km at 50 km/h. Time =|Tren bergerak 150 km pada 50 km/j. Masa =","3 hours|3 jam","7500 hours|7500 jam","200 hours|200 jam"],
+["📉","On a distance-time graph, a flat line means the object is…|Pada graf jarak-masa, garis mendatar bermakna objek…","Not moving|Tidak bergerak","Moving fast|Bergerak laju","Speeding up|Memecut"],
+["🏅","Ali: 400 m in 80 s. Ben: 300 m in 50 s. Who is faster?|Ali: 400 m dalam 80 s. Ben: 300 m dalam 50 s. Siapa lebih laju?","Ben (6 m/s)","Ali (5 m/s)","Same|Sama"]]},
+{e:"🥫",n:"Food Preservation|Pengawetan Makanan",q:[
+["🤢","Spoilt food often has…|Makanan rosak biasanya mempunyai…","A bad smell and mould|Bau busuk dan kulat","A fresh smell|Bau segar","A bright new colour|Warna baru yang cerah"],
+["🦠","Food spoils because of…|Makanan rosak kerana tindakan…","Microorganisms|Mikroorganisma","Magnets|Magnet","Wind|Angin"],
+["🐟","Drying anchovies preserves them by removing…|Mengeringkan ikan bilis mengawetnya dengan mengeluarkan…","Water|Air","Sugar|Gula","Salt|Garam"],
+["🥛","Keeping milk in a fridge…|Menyimpan susu dalam peti sejuk…","Slows microorganism growth|Melambatkan pertumbuhan mikroorganisma","Heats the milk|Memanaskan susu","Adds light|Menambah cahaya"],
+["🥒","Pickling uses…|Pengasinan menggunakan…","Vinegar|Cuka","Plain water|Air kosong","Cooking oil|Minyak masak"],
+["🧂","Salted fish lasts longer because salt…|Ikan masin tahan lama kerana garam…","Draws out water so microorganisms cannot grow|Menyerap air keluar supaya mikroorganisma tidak membiak","Only adds taste|Hanya menambah rasa","Makes fish cold|Menyejukkan ikan"],
+["🥤","Pasteurising milk means…|Pempasteuran susu bermaksud…","Heating to kill harmful microorganisms|Memanaskan untuk membunuh mikroorganisma berbahaya","Freezing it|Membekukannya","Drying it|Mengeringkannya"],
+["🏭","The aim of food preservation is to…|Tujuan pengawetan makanan ialah…","Stop or slow microorganism life processes|Menghalang atau melambatkan proses hidup mikroorganisma","Speed up spoilage|Mempercepat kerosakan","Change the colour|Menukar warna"]]},
+{e:"🗑️",n:"Waste Material|Bahan Buangan",q:[
+["🍌","Which is biodegradable?|Yang manakah terbiodegradasi?","Food leftovers|Sisa makanan","Plastic bottle|Botol plastik","Glass|Kaca"],
+["🛍️","Which is non-biodegradable?|Yang manakah tidak terbiodegradasi?","Plastic bag|Beg plastik","Banana peel|Kulit pisang","Dry leaves|Daun kering"],
+["🍂","Biodegradable waste is broken down by…|Bahan buangan terbiodegradasi diuraikan oleh…","Microorganisms|Mikroorganisma","Magnets|Magnet","Metals|Logam"],
+["🌱","Food leftovers can be turned into…|Sisa makanan boleh dijadikan…","Compost|Kompos","Plastic|Plastik","Glass|Kaca"],
+["🔋","Used batteries are…|Bateri terpakai ialah…","Toxic waste|Sisa toksik","Food waste|Sisa makanan","Paper waste|Sisa kertas"],
+["🫙","Using an old jar as a pencil holder is…|Menggunakan balang lama sebagai bekas pensel ialah…","Reusing|Guna semula","Recycling|Kitar semula","Reducing|Mengurangkan"],
+["🚯","Improper waste disposal can cause…|Pembuangan sisa tidak betul boleh menyebabkan…","Pollution and disease|Pencemaran dan penyakit","Cleaner rivers|Sungai lebih bersih","More fish|Lebih banyak ikan"],
+["♻️","Non-biodegradable waste decomposes slowly, so we…|Bahan tidak terbiodegradasi terurai perlahan, jadi kita…","Recycle and reuse it|Kitar semula dan guna semula","Burn it in the open|Bakar di tempat terbuka","Throw it in rivers|Buang ke sungai"]]},
+{e:"🌑",n:"Eclipse|Gerhana",q:[
+["☀️","In a solar eclipse, the ___ is between the Sun and Earth.|Dalam gerhana matahari, ___ berada di antara Matahari dan Bumi.","Moon|Bulan","Mars","Venus|Zuhrah"],
+["🌍","In a lunar eclipse, the ___ is between the Sun and Moon.|Dalam gerhana bulan, ___ berada di antara Matahari dan Bulan.","Earth|Bumi","Moon|Bulan","Mars"],
+["🌕","A lunar eclipse happens at…|Gerhana bulan berlaku semasa…","Full moon|Bulan purnama","New moon|Bulan baru","Half moon|Bulan separuh"],
+["🌑","A solar eclipse happens at…|Gerhana matahari berlaku semasa…","New moon|Bulan baru","Full moon|Bulan purnama","Half moon|Bulan separuh"],
+["🕶️","Safe way to watch a solar eclipse?|Cara selamat melihat gerhana matahari?","Solar filter glasses|Cermin mata penapis suria","Naked eyes|Mata kasar","Normal sunglasses|Cermin mata hitam biasa"],
+["🌘","During a lunar eclipse, the Moon is in Earth’s…|Semasa gerhana bulan, Bulan berada dalam… Bumi","Shadow|Bayang","Sunshine|Cahaya matahari","Atmosphere|Atmosfera"],
+["🔭","Order during a solar eclipse:|Susunan semasa gerhana matahari:","Sun, Moon, Earth|Matahari, Bulan, Bumi","Sun, Earth, Moon|Matahari, Bumi, Bulan","Moon, Sun, Earth|Bulan, Matahari, Bumi"],
+["📐","Why is there no eclipse every month?|Mengapa gerhana tidak berlaku setiap bulan?","The Moon’s orbit is tilted|Orbit Bulan condong","The Moon stops moving|Bulan berhenti bergerak","The Sun is too far|Matahari terlalu jauh"]]},
+{e:"⭐",n:"Constellation|Buruj",q:[
+["✨","A constellation is a group of…|Buruj ialah sekumpulan…","Stars forming a pattern|Bintang yang membentuk corak","Planets|Planet","Moons|Bulan"],
+["🦂","Which constellation looks like a scorpion?|Buruj manakah berbentuk kala jengking?","Scorpio|Scorpio (Kala Jengking)","Orion|Orion (Belantik)","Southern Cross|Pari"],
+["✝️","Which constellation looks like a cross?|Buruj manakah berbentuk salib?","Southern Cross|Pari","Orion|Belantik","Scorpio|Kala Jengking"],
+["🧭","Constellations help us…|Buruj membantu kita…","Find direction|Menentukan arah","Cook food|Memasak makanan","Swim|Berenang"],
+["🌾","Farmers used constellations to know…|Petani menggunakan buruj untuk tahu…","The planting season|Musim menanam","The price of rice|Harga beras","The weather tomorrow|Cuaca esok"],
+["☀️","Our Sun is a…|Matahari kita ialah…","Star|Bintang","Planet","Constellation|Buruj"],
+["🌌","Why do stars seem to move across the night sky?|Mengapa bintang kelihatan bergerak merentasi langit malam?","Earth rotates|Bumi berputar","Stars run around|Bintang berlari","The Moon pulls them|Bulan menarik bintang"],
+["📏","Stars in a constellation look close but are…|Bintang dalam buruj kelihatan dekat tetapi…","Very far from each other|Sangat jauh antara satu sama lain","Touching|Bersentuhan","Joined by lines|Disambung garisan"]]},
+{e:"🔧",n:"Machines|Mesin",q:[
+["⚙️","A machine makes work…|Mesin menjadikan kerja…","Easier|Lebih mudah","Harder|Lebih sukar","Slower|Lebih perlahan"],
+["🛝","A seesaw is a…|Jongkang-jongket ialah…","Lever|Tuas","Pulley|Takal","Wedge|Baji"],
+["📍","The fixed point of a lever is the…|Titik tetap tuas ialah…","Fulcrum|Fulkrum","Load|Beban","Effort|Daya"],
+["🚩","A flagpole uses a rope and…|Tiang bendera menggunakan tali dan…","Pulley|Takal","Lever|Tuas","Screw|Skru"],
+["♿","A wheelchair ramp is an…|Landai kerusi roda ialah…","Inclined plane|Satah condong","Pulley|Takal","Lever|Tuas"],
+["✂️","Scissors are made of two…|Gunting terdiri daripada dua…","Levers|Tuas","Pulleys|Takal","Screws|Skru"],
+["🪓","An axe splits wood. It is a…|Kapak membelah kayu. Ia ialah…","Wedge|Baji","Pulley|Takal","Spring|Spring"],
+["📐","A longer effort arm means the effort needed is…|Lengan daya lebih panjang bermakna daya diperlukan…","Smaller|Lebih kecil","Larger|Lebih besar","The same|Sama"]]}
+];
+const D={
+2:()=>`<svg viewBox="0 0 220 80" width="280"><path d="M60 40c0-22 40-30 60-18s20 38-6 42-54-4-54-24z" fill="#9ad0f5" stroke="currentColor"/><circle cx="95" cy="42" r="8" fill="#6a9fd4"/><text x="70" y="12">Amoeba (${t("protozoa|protozoa")})</text><circle cx="170" cy="40" r="9" fill="#f0c36a" stroke="currentColor"/><circle cx="178" cy="33" r="4" fill="#f0c36a" stroke="currentColor"/><text x="150" y="64">${t("Yeast (fungi)|Yis (kulat)")}</text><rect x="14" y="52" width="22" height="9" rx="4" fill="#d98b8b"/><text x="8" y="72">${t("Bacteria|Bakteria")}</text></svg>`,
+5:()=>`<svg viewBox="0 0 220 90" width="280"><rect x="70" y="50" width="50" height="26" rx="3" fill="#c79a6a" stroke="currentColor"/><path d="M20 60h45" stroke="#2c5ee8" stroke-width="3"/><path d="M62 56l8 4-8 4z" fill="#2c5ee8"/><path d="M170 60h-46" stroke="#d0463b" stroke-width="3"/><path d="M128 56l-8 4 8 4z" fill="#d0463b"/><path d="M40 76h160" stroke="currentColor" stroke-width="3"/><text x="20" y="48">${t("Push|Tolakan")}</text><text x="130" y="48">${t("Friction|Geseran")}</text><text x="75" y="88">${t("Rough surface|Permukaan kasar")}</text></svg>`,
+6:()=>`<svg viewBox="0 0 200 130" width="240"><path d="M24 8v100h160" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 108L70 60h45l50-48" fill="none" stroke="#2c5ee8" stroke-width="3"/><text x="2" y="14">${t("Distance|Jarak")}</text><text x="130" y="124">${t("Time|Masa")}</text><text x="68" y="54">${t("flat = stopped|mendatar = berhenti")}</text></svg>`,
+9:()=>`<svg viewBox="0 0 220 130" width="270"><circle cx="40" cy="30" r="10" fill="#f5c542"/><circle cx="180" cy="30" r="10" fill="#9aa3b8"/><circle cx="180" cy="102" r="10" fill="#f5c542"/><circle cx="40" cy="102" r="10" fill="#4aa3df"/><text x="12" y="50">${t("Sun|Matahari")}</text><text x="12" y="82">${t("Solar: Sun, Moon, Earth|Matahari: Matahari, Bulan, Bumi")}</text><text x="150" y="14">${t("Moon|Bulan")}</text><text x="150" y="122">${t("Lunar: Sun, Earth, Moon|Bulan: Matahari, Bumi, Bulan")}</text><path d="M52 30h118M52 102h118" stroke="#f5c542" stroke-dasharray="3"/></svg>`,
+10:()=>`<svg viewBox="0 0 200 120" width="240"><g fill="#f5f5ff" stroke="none"><circle cx="64" cy="22" r="3"/><circle cx="130" cy="26" r="3"/><circle cx="84" cy="56" r="3"/><circle cx="94" cy="58" r="3"/><circle cx="104" cy="60" r="3"/><circle cx="70" cy="98" r="3"/><circle cx="128" cy="96" r="3"/></g><g stroke="currentColor" fill="none"><path d="M64 22L84 56 70 98M130 26L104 60 128 96M84 56h20"/></g><text x="4" y="14">Orion (Belantik)</text></svg>`,
+11:()=>`<svg viewBox="0 0 200 100" width="250"><path d="M20 80h120l-50-20z" fill="#e8c9a0" stroke="currentColor"/><path d="M20 80V82" stroke="currentColor"/><path d="M60 40l60 30" stroke="currentColor" stroke-width="3"/><path d="M95 56l12 8" stroke="#d0463b" stroke-width="5"/><path d="M150 20v40M142 30h16" stroke="currentColor" stroke-width="3"/><text x="10" y="14">${t("Lever|Tuas")}</text><text x="75" y="96">${t("Fulcrum|Fulkrum")}</text><text x="150" y="76">${t("Load|Beban")}</text><text x="20" y="34">${t("Effort|Daya")} ↓</text></svg>`
+};
+let L=0,S,view=menu,aiming=false,raf=0;
+const $=s=>document.querySelector(s),t=s=>{const a=s.split("|");return a[L]||a[0]},app=$("#app");
+const ST=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+function head(){return `<header><h1>🎳 ${t("Sains Boling! Year 6|Sains Boling! Tahun 6")}</h1><button onclick="L=1-L;view()">${L?"English":"Bahasa Melayu"}</button></header>`}
+function menu(){view=menu;
+app.innerHTML=head()+`<p>${t("Pick a topic. Answer correctly to roll the ball and knock down the pins!|Pilih topik. Jawab dengan betul untuk menggolek bola dan menjatuhkan pin!")}</p><div class="g">${T.map((o,i)=>`<button onclick="start(${i})"><div style="font-size:30px">${o.e}</div><b>${i+1}. ${t(o.n)}</b><br><small>8 ${t("questions|soalan")}</small></button>`).join("")}</div><button class="opt" onclick="board()">🏆 ${t("Leaderboard|Papan Pendahulu")}</button>`}
+function start(i){S={t:i,q:0,c:0,p:0,o:null};ask()}
+function ask(){view=ask;const q=T[S.t].q[S.q];if(!S.o)S.o=[0,1,2].sort(()=>Math.random()-.5);
+const lv=S.q<3?t("Easy|Mudah"):S.q<6?t("Medium|Sederhana"):t("Hard|Sukar");
+app.innerHTML=head()+`<div class="card"><span class="tag">${t(T[S.t].n)}</span> <span class="tag">${S.q+1}/8 · ${lv}</span> <span class="tag">🎳 ${S.p} · ✔ ${S.c}</span>
+${D[S.t]&&S.q%2==0?D[S.t]():""}<div class="big">${q[0]}</div><p><b>${t(q[1])}</b></p>
+<div>${S.o.map(k=>`<button class="opt" onclick="ans(${k},this)">${t(q[2+k])}</button>`).join("")}</div><div id="fb"></div></div>`}
+function ans(k,b){const ok=k==0,q=T[S.t].q[S.q];document.querySelectorAll(".opt").forEach(x=>x.disabled=true);b.classList.add(ok?"ok":"no");
+if(ok){S.c++;$("#fb").innerHTML=`<p>✅ ${t("Correct! Roll your ball!|Betul! Golek bola anda!")}</p><canvas id="cv" width="320" height="230"></canvas><button class="p opt" id="sb" onclick="shoot()">🎳 ${t("ROLL!|GOLEK!")}</button>`;aiming=true;aimLoop()}
+else{document.querySelectorAll(".opt").forEach(x=>{if(x.textContent==t(q[2]))x.classList.add("ok")});$("#fb").innerHTML=`<p>❌ ${t("Not quite. The answer is in green.|Belum tepat. Jawapan ditunjukkan dengan hijau.")}</p><button class="p opt" onclick="next()">${t("Next|Seterusnya")} ➜</button>`}}
+const PINS=[];[[1,100],[2,82],[3,64],[4,46]].forEach(([n,y])=>{for(let i=0;i<n;i++)PINS.push({x:160+(i-(n-1)/2)*20,y})});
+function draw(mx,bx,by,down){const c=$("#cv");if(!c)return;const x=c.getContext("2d");x.fillStyle="#241c3a";x.fillRect(0,0,320,230);
+x.fillStyle="#555";x.fillRect(100,0,10,230);x.fillRect(210,0,10,230);x.fillStyle="#d9a65e";x.fillRect(110,0,100,230);x.strokeStyle="rgba(120,70,20,.35)";for(let i=120;i<210;i+=10){x.beginPath();x.moveTo(i,0);x.lineTo(i,230);x.stroke()}
+PINS.forEach((p,i)=>{if(down&&down.has(i)){x.fillStyle="rgba(255,255,255,.35)";x.beginPath();x.ellipse(p.x+(i%2?10:-10),p.y+4,8,3,.4,0,7);x.fill()}else{x.fillStyle="#fff";x.beginPath();x.ellipse(p.x,p.y,5,8,0,0,7);x.fill();x.fillStyle="#d0463b";x.fillRect(p.x-4,p.y-3,8,3)}});
+if(mx!=null){x.strokeStyle="#ffe14d";x.lineWidth=3;x.beginPath();x.moveTo(mx,125);x.lineTo(mx,150);x.moveTo(mx-8,138);x.lineTo(mx,125);x.lineTo(mx+8,138);x.stroke()}
+const r=by>120?11:7;x.fillStyle="#2c5ee8";x.beginPath();x.arc(bx,by,r,0,7);x.fill();x.fillStyle="#fff";x.beginPath();x.arc(bx-3,by-3,1.6,0,7);x.arc(bx+1,by-4,1.6,0,7);x.fill()}
+function aimLoop(){if(!aiming)return;S.aim=160+46*Math.sin(performance.now()/450);draw(S.aim,160,205,null);raf=requestAnimationFrame(aimLoop)}
+function shoot(){if(!aiming)return;aiming=false;cancelAnimationFrame(raf);$("#sb").disabled=true;
+const ax=S.aim+(Math.random()-.5)*8,t0=performance.now(),dx=Math.abs(ax-160),gut=dx>48;
+let n=gut?0:Math.max(0,10-Math.floor(dx/5)),down=new Set();
+const order=PINS.map((p,i)=>i).sort((a,b)=>Math.abs(PINS[a].x-ax)-Math.abs(PINS[b].x-ax)),hit=new Set(order.slice(0,n));
+(function f(now){const p=Math.min(1,(now-t0)/900);draw(null,160+(ax-160)*p,205-135*p,p>.85?hit:null);
+if(p<1)return requestAnimationFrame(f);S.p+=n;
+$("#sb").outerHTML=`<p><b>${n==10?"🎳 STRIKE! 10":gut?"😬 "+t("Gutter ball!|Bola masuk parit!"):"🎳 "+n+" "+t("pins down!|pin jatuh!")}</b></p><button class="p opt" onclick="next()">${t("Next|Seterusnya")} ➜</button>`})(t0)}
+function next(){S.q++;S.o=null;S.q<8?ask():end()}
+function end(){view=end;const pts=S.c*10+S.p;
+app.innerHTML=head()+`<div class="card"><div class="big">${S.c>=7?"🏆":S.c>=4?"🌟":"💪"}</div><h2>${t(T[S.t].n)}</h2><p>✔ ${t("Correct answers|Jawapan betul")}: <b>${S.c}/8</b><br>🎳 ${t("Pins knocked down|Pin dijatuhkan")}: <b>${S.p}</b><br>⭐ ${t("Points|Mata")}: <b>${pts}</b></p>
+<input id="nm" maxlength="16" placeholder="${t("Your name|Nama anda")}"><button class="p opt" onclick="save(${pts})">🏆 ${t("Save to leaderboard|Simpan ke papan pendahulu")}</button><button class="opt" onclick="start(${S.t})">🔁 ${t("Play again|Main semula")}</button><button class="opt" onclick="menu()">☰ ${t("Topics|Topik")}</button></div>`}
+function save(p){const n=($("#nm").value||"Murid").slice(0,16),a=ST("sb6");a.push({n,p,t:S.t});a.sort((x,y)=>y.p-x.p);try{localStorage.setItem("sb6",JSON.stringify(a.slice(0,50)))}catch(e){}board()}
+function board(){view=board;const a=ST("sb6").slice(0,10);
+app.innerHTML=head()+`<div class="card"><h2>🏆 ${t("Leaderboard|Papan Pendahulu")}</h2>${a.length?`<table><tr><th>#</th><th>${t("Name|Nama")}</th><th>${t("Topic|Topik")}</th><th>⭐</th></tr>${a.map((r,i)=>`<tr><td>${i+1}</td><td>${r.n.replace(/[<>&]/g,"")}</td><td>${T[r.t].e}</td><td>${r.p}</td></tr>`).join("")}</table>`:`<p>${t("No scores yet. Be the first!|Belum ada skor. Jadilah yang pertama!")}</p>`}<small>${t("Scores are saved on this device.|Skor disimpan pada peranti ini.")}</small></div><button class="opt" onclick="menu()">☰ ${t("Topics|Topik")}</button>`}
+menu();
+</script></body></html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Archery Science Year 4</title>
+<style>
+:root{--bg:#eef6e8;--fg:#1d2b1f;--card:#fff;--ac:#2e7d32;--bd:#c3d6b8;--bad:#c62828;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14201a;--fg:#e8f0e6;--card:#1f2f26;--ac:#66bb6a;--bd:#33493c;--bad:#ef5350;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#14201a;--fg:#e8f0e6;--card:#1f2f26;--ac:#66bb6a;--bd:#33493c;--bad:#ef5350;color-scheme:dark}
+html,body{margin:0}body{background:var(--bg);color:var(--fg);font-family:system-ui,"Segoe UI",Arial,sans-serif;padding:10px;text-align:center}
+h1{font-size:1.3rem;margin:6px}h2{font-size:1.1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;max-width:640px;margin:auto}
+button{font:inherit;cursor:pointer;border:2px solid var(--bd);background:var(--card);color:var(--fg);border-radius:12px;padding:10px;margin:4px}
+button:hover{border-color:var(--ac)}.t{font-size:1rem}.go{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}
+.p{max-width:620px;margin:6px auto;background:var(--card);border:2px solid var(--bd);border-radius:14px;padding:10px}
+.em{font-size:4rem;line-height:1.1}.o{display:block;width:100%;text-align:left}.ok{background:#43a047;color:#fff}.no{background:var(--bad);color:#fff}
+canvas{width:100%;max-width:620px;border-radius:12px;border:2px solid var(--bd);display:none}small{opacity:.75}
+</style></head><body>
+<h1>🏹 Archery Science · Year 4</h1><div id="g"></div>
+<canvas id="cv" width="620" height="240"></canvas><div id="p"></div>
+<script>
+const D=[["Scientific Skills","🔬",`👀|Using your five senses to notice things is called…|Observing|Predicting|Inferring
+📏|Which tool measures length?|Ruler|Stopwatch|Thermometer
+⏱️|Which tool measures time?|Stopwatch|Balance|Ruler
+🗂️|Grouping objects by their similarities is…|Classifying|Communicating|Measuring
+🔮|Saying what may happen next, using a pattern, is…|Predicting|Observing|Classifying
+💭|A reasonable explanation for an observation is…|Inferring|Measuring|Classifying
+🌡️|In a fair test, the variable you change is the…|Manipulated variable|Responding variable|Constant variable
+🌱|Plants grow taller with more light. Plant height is the…|Responding variable|Manipulated variable|Hypothesis
+🧪|A statement you can test in an experiment is a…|Hypothesis|Conclusion|Observation
+📝|Describing something by what you do and observe is…|Defining operationally|Predicting|Classifying`],
+["Human","🫁",`🫁|Which organ do we breathe with?|Lungs|Heart|Stomach
+👃|Air enters the body through the…|Nose|Ear|Elbow
+🏃|After running, your breathing rate…|Increases|Decreases|Stops
+💨|Which gas do we need from the air?|Oxygen|Carbon dioxide|Helium
+🫁|Which gas do we breathe out more of?|Carbon dioxide|Oxygen|Hydrogen
+🚬|Which harms the lungs?|Cigarette smoke|Fresh air|Exercise
+🚽|Which organ makes urine?|Kidneys|Lungs|Heart
+🍚|Removing faeces from the body is called…|Defecation|Breathing|Sweating
+🔥|You pull your hand from a hot cup. The hot cup is the…|Stimulus|Response|Organ
+🌞|In bright light, the pupil of your eye becomes…|Smaller|Larger|Invisible`],
+["Animals","🐾",`🐟|Which animal is a vertebrate?|Fish|Butterfly|Spider
+🐛|Animals without a backbone are…|Invertebrates|Vertebrates|Mammals
+🐄|Which animal is a mammal?|Cow|Frog|Snake
+🐸|Which animal is an amphibian?|Frog|Lizard|Whale
+🦎|Reptiles have…|Dry scaly skin|Feathers|Wet smooth skin
+🐦|Birds are covered with…|Feathers|Scales|Fur
+🐠|Fish breathe using…|Gills|Lungs|Wings
+🐋|A whale is a mammal because it…|Feeds its young with milk|Has gills|Lays eggs
+🐢|Which pair are both reptiles?|Turtle and crocodile|Frog and newt|Bat and eagle
+🦇|A bat can fly but it is a…|Mammal|Bird|Insect`],
+["Plants","🌿",`🌞|Plants make their own food by…|Photosynthesis|Digestion|Excretion
+🍃|Photosynthesis mainly happens in the…|Leaves|Roots|Fruits
+☀️|Plants need which for photosynthesis?|Sunlight, water, carbon dioxide|Sand, wind, oxygen|Soil, salt, fire
+💧|Plants take in water through their…|Roots|Leaves|Petals
+💨|Which gas do plants take in for photosynthesis?|Carbon dioxide|Oxygen|Smoke
+🫧|Which gas do plants release in photosynthesis?|Oxygen|Carbon dioxide|Methane
+🍬|Food made by photosynthesis is…|Glucose (sugar)|Salt|Wax
+🌑|A plant kept in the dark for many days will…|Turn pale and weak|Grow greener|Make more food
+🟢|The green substance that traps light is…|Chlorophyll|Glucose|Oxygen
+🔬|Iodine turns blue-black to show…|Starch is present|Water is present|Oxygen is present`],
+["Properties of Light","💡",`☀️|Which is a natural source of light?|The Sun|Torch|Candle
+➡️|Light travels in…|Straight lines|Curved lines|Circles
+🌑|A shadow forms when light is…|Blocked by an opaque object|Passing through glass|Reflected by water
+🪞|Light bouncing off a surface is…|Reflection|Refraction|Absorption
+🪟|Which material is transparent?|Clear glass|Wood|Cardboard
+🌫️|Which material is translucent?|Frosted glass|Brick|Mirror
+🌈|Light bending as it passes from air into water is…|Refraction|Reflection|Shadow
+🥄|A spoon in water looks bent because of…|Refraction|Reflection|Evaporation
+🔦|Which surface reflects light best?|Mirror|Black cloth|Soil
+📷|A shadow becomes bigger when the object moves…|Closer to the light source|Farther from the light source|Away from the light and screen`],
+["Sound","🔔",`🎸|Sound is produced by…|Vibration|Light|Colour
+👂|We hear sound with our…|Ears|Eyes|Nose
+🔊|Sound cannot travel through a…|Vacuum|Liquid|Solid
+🥁|Sound can travel through…|Solids, liquids and gases|Only air|Only solids
+🎵|Pitch means how…|High or low a sound is|Far a sound travels|Fast a sound is
+📢|A louder sound comes from…|A bigger vibration|A smaller vibration|A brighter colour
+🛏️|Which is a good sound absorber?|Foam|Metal|Glass
+🎻|A shorter, tighter string gives a…|Higher pitch|Lower pitch|Quieter pitch
+🏔️|An echo is sound that is…|Reflected|Absorbed|Made quieter by light
+🔔|Sound usually travels fastest in…|Solids|Liquids|Gases`],
+["Energy","⚡",`☀️|The main source of energy for Earth is the…|Sun|Moon|Wind
+🔋|A battery stores…|Chemical energy|Light energy|Sound energy
+💡|A bulb changes electrical energy to light and…|Heat|Water|Gas
+🌬️|Which is a renewable energy source?|Wind|Coal|Petrol
+🛢️|Which is a non-renewable energy source?|Petroleum|Sunlight|Wind
+🌊|Energy from flowing water is…|Hydro energy|Wind energy|Solar energy
+🔄|Energy can be…|Changed from one form to another|Created from nothing|Destroyed
+🔆|A solar panel changes light energy into…|Electrical energy|Sound energy|Water
+🍞|Food contains…|Chemical energy|Sound energy|Light energy
+🌍|We must save energy because fossil fuels…|Will run out|Never end|Grow back quickly`],
+["Material","🧱",`🔨|We choose materials for things based on their…|Properties|Names|Smells
+🧱|Which is a hard material?|Iron|Sponge|Cotton
+🧽|Which material absorbs water well?|Sponge|Plastic|Glass
+🪵|Which material floats on water?|Wood|Iron nail|Stone
+🥤|Plastic bottles are used because plastic is…|Light and waterproof|Rusty|Heavy
+🥄|Which is a good heat conductor?|Metal spoon|Wooden spoon|Plastic spoon
+🧤|Oven gloves use cloth because cloth is a good…|Heat insulator|Heat conductor|Light source
+♻️|Recycling means…|Using materials again to make new things|Burning them|Throwing them away
+🪟|Windows use glass because it is…|Transparent|Flexible|Absorbent
+🔩|Iron rusts when exposed to…|Oxygen and water|Light only|Sound`],
+["Earth","🌍",`🌍|The Earth is a…|Planet|Star|Moon
+☀️|The centre of our Solar System is the…|Sun|Earth|Moon
+🌙|The Moon orbits around the…|Earth|Sun only|Jupiter
+🌅|Day and night happen because Earth…|Rotates (spins)|Is hot|Stops moving
+🔴|Which planet is called the Red Planet?|Mars|Venus|Jupiter
+🪐|Which planet is famous for its rings?|Saturn|Earth|Mercury
+🔢|How many planets are in our Solar System?|8|9|7
+🔥|Which planet is closest to the Sun?|Mercury|Earth|Neptune
+🌗|The Moon seems to change shape because we see…|Different parts of its lit side|Earth’s shadow always|Clouds on it
+📆|Earth takes how long to go around the Sun?|1 year|1 day|1 month`],
+["Machines","⚙️",`🔧|A machine helps make work…|Easier|Harder|Slower always
+🛠️|Which is a simple machine?|Lever|Television|Phone
+⚖️|A see-saw is a…|Lever|Pulley|Wedge
+⛰️|A ramp is an…|Inclined plane|Pulley|Wheel
+🚩|A flagpole uses a…|Pulley|Screw|Wedge
+🔩|A screw is used to…|Hold things together|Cut grass|Freeze food
+🪓|An axe blade works as a…|Wedge|Pulley|Wheel and axle
+🚲|A bicycle wheel is a…|Wheel and axle|Wedge|Screw
+🛒|A wheelbarrow is a type of…|Lever|Pulley|Screw
+📏|A longer lever arm means the effort needed is…|Smaller|Bigger|The same`]];
+const $=i=>document.getElementById(i),cv=$("cv"),cx=cv.getContext("2d"),LV=["Easy","Easy","Easy","Medium","Medium","Medium","Medium","Hard","Hard","Hard"];
+let best={},S,ty=120,dy=1.7,ar=null,run=false;
+const sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+function menu(){run=false;cv.style.display="none";$("p").innerHTML="";$("g").innerHTML="<h2>Choose a topic</h2><div class=grid>"+D.map((d,i)=>`<button class=t onclick=start(${i})>${d[1]}<br><b>${i+1}. ${d[0]}</b>${best[i]!=null?`<br><small>Best ${best[i]}/10</small>`:""}</button>`).join("")+"</div>"}
+function start(t){S={t,q:0,c:0,p:0,r:D[t][2].split("\n").map(r=>r.split("|"))};cv.style.display="block";if(!run){run=true;loop()}ar=null;ask()}
+function ask(){const r=S.r[S.q];S.o=sh([r[2],r[3],r[4]]);ar=null;stuck=null;$("g").innerHTML=`<div class=p><small>${D[S.t][0]} · Question ${S.q+1}/10 · ${LV[S.q]} · ✅ ${S.c} · 🎯 ${S.p}</small><div class=em>${r[0]}</div><h2>${r[1]}</h2>${S.o.map((o,i)=>`<button class=o onclick=pick(${i},this)>${o}</button>`).join("")}</div>`}
+function pick(i,b){const r=S.r[S.q],ok=S.o[i]==r[2];document.querySelectorAll(".o").forEach(x=>{x.disabled=true;if(x.textContent==r[2])x.classList.add("ok")});
+if(ok){S.c++;b.classList.add("ok");$("p").innerHTML="<div class=p><b>🎉 Correct! Wait for the target to reach the middle, then shoot!</b><br><button class=go id=sb onclick=shoot()>🏹 SHOOT</button></div>"}
+else{b.classList.add("no");$("p").innerHTML=`<div class=p><b>Not this time. Answer: ${r[2]}</b><br><button class=go onclick=nxt()>Next ➡️</button></div>`}}
+function shoot(){$("sb").disabled=true;ar={x:70,y:120}}
+function nxt(){$("p").innerHTML="";S.q++;S.q<10?ask():fin()}
+function fin(){const b=best[S.t];if(b==null||S.c>b)best[S.t]=S.c;cv.style.display="none";const s=S.c>=9?"🌟🌟🌟":S.c>=6?"🌟🌟":S.c>=3?"🌟":"💪";
+$("g").innerHTML=`<div class=p><div class=em>${s}</div><h2>${D[S.t][0]} complete!</h2><h2>Quiz score: ${S.c} / 10</h2><h2>Archery points: ${S.p}</h2><p>${S.c>=8?"Amazing scientist!":S.c>=5?"Good job! Try again for a higher score.":"Keep learning and try again!"}</p><button class=go onclick=start(${S.t})>Play again</button><button onclick=menu()>All topics</button></div>`}
+function loop(){if(!run)return;ty+=dy;if(ty>200||ty<40)dy=-dy;
+if(ar){ar.x+=14;if(ar.x>=520){const d=Math.abs(ar.y-ty),p=d<8?10:d<20?6:d<36?3:0;ar.x=520;ar.hit=1;S.p+=p;$("p").innerHTML=`<div class=p><b>${p?"🎯 +"+p+" "+u("pts"):u("miss")}</b><br><button class=go onclick=nxt()>${u("next")}</button></div>`;stuck={x:520,y:ar.y};ar=null}}
+draw();requestAnimationFrame(loop)}
+let stuck=null;
+function draw(){const w=620;cx.fillStyle="#9ad7ff";cx.fillRect(0,0,w,240);cx.fillStyle="#5fae4f";cx.fillRect(0,215,w,25);cx.fillStyle="#ffd54f";cx.beginPath();cx.arc(580,30,18,0,7);cx.fill();
+cx.fillStyle="#8d6e63";cx.fillRect(545,ty,6,240-ty);
+[[36,"#fff"],[28,"#e53935"],[18,"#fff"],[8,"#fdd835"]].forEach(([r,c])=>{cx.fillStyle=c;cx.strokeStyle="#333";cx.beginPath();cx.arc(548,ty,r,0,7);cx.fill();cx.stroke()});
+cx.strokeStyle="#5d4037";cx.lineWidth=4;cx.beginPath();cx.arc(50,120,40,-1.2,1.2);cx.stroke();cx.lineWidth=1;cx.beginPath();cx.moveTo(50+40*Math.cos(-1.2),120-40*Math.sin(1.2));cx.lineTo(50+40*Math.cos(1.2),120+40*Math.sin(1.2));cx.stroke();
+cx.font="26px serif";cx.fillText("🧒",8,150);
+const a=ar||stuck;if(a){cx.strokeStyle="#4e342e";cx.lineWidth=3;cx.beginPath();cx.moveTo(a.x-50,a.y);cx.lineTo(a.x,a.y);cx.stroke()}else if(!ar){cx.strokeStyle="#4e342e";cx.lineWidth=3;cx.beginPath();cx.moveTo(30,120);cx.lineTo(80,120);cx.stroke()}cx.lineWidth=1}
+let L="en";
+const B=[`Menggunakan lima deria untuk memerhati dikenali sebagai…|Memerhati|Meramal|Membuat inferens
+Alat manakah mengukur panjang?|Pembaris|Jam randik|Termometer
+Alat manakah mengukur masa?|Jam randik|Penimbang|Pembaris
+Mengumpulkan objek mengikut persamaan ialah…|Mengelas|Berkomunikasi|Mengukur
+Menyatakan perkara yang mungkin berlaku berdasarkan corak ialah…|Meramal|Memerhati|Mengelas
+Penerangan munasabah bagi suatu pemerhatian ialah…|Membuat inferens|Mengukur|Mengelas
+Dalam ujian adil, pemboleh ubah yang diubah ialah…|Pemboleh ubah dimanipulasikan|Pemboleh ubah bergerak balas|Pemboleh ubah dimalarkan
+Tumbuhan lebih tinggi dengan lebih cahaya. Ketinggian tumbuhan ialah…|Pemboleh ubah bergerak balas|Pemboleh ubah dimanipulasikan|Hipotesis
+Pernyataan yang boleh diuji dalam eksperimen ialah…|Hipotesis|Kesimpulan|Pemerhatian
+Menerangkan sesuatu berdasarkan apa yang dilakukan dan diperhatikan ialah…|Mendefinisi secara operasi|Meramal|Mengelas`,
+`Organ manakah yang kita gunakan untuk bernafas?|Peparu|Jantung|Perut
+Udara masuk ke dalam badan melalui…|Hidung|Telinga|Siku
+Selepas berlari, kadar pernafasan anda…|Meningkat|Menurun|Berhenti
+Gas manakah yang diperlukan badan daripada udara?|Oksigen|Karbon dioksida|Helium
+Gas manakah yang lebih banyak dihembus keluar?|Karbon dioksida|Oksigen|Hidrogen
+Apakah yang merosakkan peparu?|Asap rokok|Udara segar|Senaman
+Organ manakah menghasilkan air kencing?|Ginjal|Peparu|Jantung
+Membuang najis daripada badan dipanggil…|Penyahtinjaan|Bernafas|Berpeluh
+Anda menarik tangan daripada cawan panas. Cawan panas ialah…|Rangsangan|Gerak balas|Organ
+Dalam cahaya terang, anak mata menjadi…|Lebih kecil|Lebih besar|Hilang`,
+`Haiwan manakah vertebrata?|Ikan|Rama-rama|Labah-labah
+Haiwan tanpa tulang belakang ialah…|Invertebrata|Vertebrata|Mamalia
+Haiwan manakah mamalia?|Lembu|Katak|Ular
+Haiwan manakah amfibia?|Katak|Cicak|Ikan paus
+Reptilia mempunyai…|Kulit kering bersisik|Bulu pelepah|Kulit basah licin
+Burung diliputi dengan…|Bulu pelepah|Sisik|Bulu halus
+Ikan bernafas menggunakan…|Insang|Peparu|Sayap
+Ikan paus ialah mamalia kerana ia…|Menyusukan anaknya|Mempunyai insang|Bertelur
+Pasangan manakah kedua-duanya reptilia?|Penyu dan buaya|Katak dan sesumpah air|Kelawar dan helang
+Kelawar boleh terbang tetapi ia ialah…|Mamalia|Burung|Serangga`,
+`Tumbuhan membuat makanan sendiri melalui…|Fotosintesis|Pencernaan|Perkumuhan
+Fotosintesis berlaku terutamanya di…|Daun|Akar|Buah
+Tumbuhan memerlukan apa untuk fotosintesis?|Cahaya matahari, air, karbon dioksida|Pasir, angin, oksigen|Tanah, garam, api
+Tumbuhan menyerap air melalui…|Akar|Daun|Kelopak
+Gas manakah diambil tumbuhan untuk fotosintesis?|Karbon dioksida|Oksigen|Asap
+Gas manakah dibebaskan dalam fotosintesis?|Oksigen|Karbon dioksida|Metana
+Makanan yang dihasilkan oleh fotosintesis ialah…|Glukosa (gula)|Garam|Lilin
+Tumbuhan yang diletakkan di tempat gelap berhari-hari akan…|Pucat dan lemah|Menjadi lebih hijau|Menghasilkan lebih makanan
+Bahan hijau dalam daun yang memerangkap cahaya ialah…|Klorofil|Glukosa|Oksigen
+Iodin bertukar biru tua untuk menunjukkan…|Kanji hadir|Air hadir|Oksigen hadir`,
+`Sumber cahaya semula jadi ialah…|Matahari|Lampu suluh|Lilin
+Cahaya bergerak dalam…|Garis lurus|Garis melengkung|Bulatan
+Bayang-bayang terbentuk apabila cahaya…|Dihalang oleh objek legap|Menembusi kaca jernih|Dipantulkan oleh air
+Cahaya melantun daripada permukaan ialah…|Pantulan|Pembiasan|Penyerapan
+Bahan manakah lutsinar?|Kaca jernih|Kayu|Kadbod
+Bahan manakah lut cahaya?|Kaca kabur|Bata|Cermin
+Cahaya membengkok apabila masuk dari udara ke air ialah…|Pembiasan|Pantulan|Bayang-bayang
+Sudu dalam air kelihatan bengkok kerana…|Pembiasan|Pantulan|Pengewapan
+Permukaan manakah memantul cahaya paling baik?|Cermin|Kain hitam|Tanah
+Bayang-bayang menjadi lebih besar apabila objek bergerak…|Lebih dekat dengan sumber cahaya|Lebih jauh daripada sumber cahaya|Jauh daripada cahaya dan skrin`,
+`Bunyi dihasilkan oleh…|Getaran|Cahaya|Warna
+Kita mendengar bunyi dengan…|Telinga|Mata|Hidung
+Bunyi tidak boleh merambat melalui…|Vakum|Cecair|Pepejal
+Bunyi boleh merambat melalui…|Pepejal, cecair dan gas|Udara sahaja|Pepejal sahaja
+Pic bunyi bermaksud betapa…|Tinggi atau rendah sesuatu bunyi|Jauh bunyi merambat|Laju sesuatu bunyi
+Bunyi yang lebih kuat datang daripada…|Getaran yang lebih besar|Getaran yang lebih kecil|Warna yang lebih cerah
+Bahan manakah penyerap bunyi yang baik?|Span|Logam|Kaca
+Dawai yang lebih pendek dan tegang menghasilkan…|Pic lebih tinggi|Pic lebih rendah|Pic lebih senyap
+Gema ialah bunyi yang…|Dipantulkan|Diserap|Dibuat senyap oleh cahaya
+Bunyi biasanya merambat paling laju dalam…|Pepejal|Cecair|Gas`,
+`Sumber tenaga utama Bumi ialah…|Matahari|Bulan|Angin
+Bateri menyimpan…|Tenaga kimia|Tenaga cahaya|Tenaga bunyi
+Mentol menukarkan tenaga elektrik kepada cahaya dan…|Haba|Air|Gas
+Sumber tenaga boleh baharu ialah…|Angin|Arang batu|Petrol
+Sumber tenaga tak boleh baharu ialah…|Petroleum|Cahaya matahari|Angin
+Tenaga daripada air mengalir ialah…|Tenaga hidro|Tenaga angin|Tenaga suria
+Tenaga boleh…|Diubah daripada satu bentuk kepada bentuk lain|Dicipta daripada tiada|Dimusnahkan
+Panel suria menukarkan tenaga cahaya kepada…|Tenaga elektrik|Tenaga bunyi|Air
+Makanan mengandungi…|Tenaga kimia|Tenaga bunyi|Tenaga cahaya
+Kita perlu jimat tenaga kerana bahan api fosil…|Akan habis|Tidak akan habis|Cepat tumbuh semula`,
+`Kita memilih bahan berdasarkan…|Sifatnya|Namanya|Baunya
+Bahan manakah keras?|Besi|Span|Kapas
+Bahan manakah menyerap air dengan baik?|Span|Plastik|Kaca
+Bahan manakah terapung di atas air?|Kayu|Paku besi|Batu
+Botol plastik digunakan kerana plastik…|Ringan dan kalis air|Berkarat|Berat
+Konduktor haba yang baik ialah…|Sudu logam|Sudu kayu|Sudu plastik
+Sarung tangan ketuhar daripada kain kerana kain ialah…|Penebat haba yang baik|Konduktor haba|Sumber cahaya
+Kitar semula bermaksud…|Menggunakan semula bahan untuk membuat barang baharu|Membakarnya|Membuangnya
+Tingkap menggunakan kaca kerana ia…|Lutsinar|Boleh lentur|Menyerap
+Besi berkarat apabila terdedah kepada…|Oksigen dan air|Cahaya sahaja|Bunyi`,
+`Bumi ialah…|Planet|Bintang|Bulan
+Pusat Sistem Suria ialah…|Matahari|Bumi|Bulan
+Bulan mengelilingi…|Bumi|Matahari sahaja|Musytari
+Siang dan malam berlaku kerana Bumi…|Berputar|Panas|Berhenti bergerak
+Planet manakah digelar Planet Merah?|Marikh|Zuhrah|Musytari
+Planet manakah terkenal dengan cincinnya?|Zuhal|Bumi|Utarid
+Berapakah planet dalam Sistem Suria?|8|9|7
+Planet manakah paling dekat dengan Matahari?|Utarid|Bumi|Neptun
+Bulan kelihatan berubah bentuk kerana kita melihat…|Bahagian berlainan yang disinari|Bayang Bumi sentiasa|Awan di atasnya
+Bumi mengambil masa berapa lama mengelilingi Matahari?|1 tahun|1 hari|1 bulan`,
+`Mesin membantu menjadikan kerja…|Lebih mudah|Lebih sukar|Sentiasa lebih perlahan
+Yang manakah mesin mudah?|Tuas|Televisyen|Telefon
+Jongkang-jongket ialah…|Tuas|Takal|Baji
+Landasan condong ialah…|Satah condong|Takal|Roda
+Tiang bendera menggunakan…|Takal|Skru|Baji
+Skru digunakan untuk…|Mencantumkan benda|Memotong rumput|Membekukan makanan
+Mata kapak berfungsi sebagai…|Baji|Takal|Roda dan gandar
+Roda basikal ialah…|Roda dan gandar|Baji|Skru
+Kereta sorong ialah sejenis…|Tuas|Takal|Skru
+Lengan tuas yang lebih panjang bermakna usaha diperlukan…|Lebih kecil|Lebih besar|Sama`];
+const N={en:D.map(d=>d[0]),ms:["Kemahiran Saintifik","Manusia","Haiwan","Tumbuhan","Sifat Cahaya","Bunyi","Tenaga","Bahan","Bumi","Mesin"]};
+const U={en:{ch:"Choose a topic",best:"Best",qn:"Question",e:"Easy",m:"Medium",h:"Hard",ok:"🎉 Correct! Wait for the target to reach the middle, then shoot!",no:"Not this time. Answer: ",next:"Next ➡️",shoot:"🏹 SHOOT",pts:"points!",miss:"💨 Missed!",qs:"Quiz score",ap:"Archery points",g1:"Amazing scientist!",g2:"Good job! Try again for a higher score.",g3:"Keep learning and try again!",nm:"Your name",sv:"Save score",again:"Play again",all:"All topics",lb:"Leaderboard",none:"No scores yet",back:"Back",lang:"🌐 Bahasa Melayu",note:"Saved on this device only. Score = 10 per correct answer + archery points (max 200)."},
+ms:{ch:"Pilih topik",best:"Terbaik",qn:"Soalan",e:"Mudah",m:"Sederhana",h:"Sukar",ok:"🎉 Betul! Tunggu sasaran sampai di tengah, kemudian tembak!",no:"Belum tepat. Jawapan: ",next:"Seterusnya ➡️",shoot:"🏹 TEMBAK",pts:"mata!",miss:"💨 Tersasar!",qs:"Skor kuiz",ap:"Mata memanah",g1:"Saintis hebat!",g2:"Bagus! Cuba lagi untuk skor lebih tinggi.",g3:"Teruskan belajar dan cuba lagi!",nm:"Nama anda",sv:"Simpan skor",again:"Main semula",all:"Semua topik",lb:"Papan Pendahulu",none:"Belum ada skor",back:"Kembali",lang:"🌐 English",note:"Disimpan pada peranti ini sahaja. Skor = 10 bagi setiap jawapan betul + mata memanah (maks 200)."}};
+const u=k=>U[L][k],l=(a,b)=>L=="ms"?b:a,e=s=>String(s).replace(/[<>&"']/g,c=>"&#"+c.charCodeAt(0)+";");
+const rw=(t,q)=>{const a=D[t][2].split("\n")[q].split("|");if(L!="ms")return a;return [a[0],...B[t].split("\n")[q].split("|")]};
+const v=c=>`<svg viewBox="0 0 200 100" width="270" style="max-width:100%;fill:none;stroke:currentColor;stroke-width:2">${c}</svg>`,
+T=(x,y,s)=>`<text x="${x}" y="${y}" stroke="none" fill="currentColor" font-size="10" font-family="sans-serif">${s}</text>`;
+const V={
+ruler:()=>v(`<rect x="10" y="35" width="180" height="30" fill="#ffe082"/>`+Array.from({length:19},(_,i)=>`<path d="M${10+i*10} 35v${i%5?8:14}"/>`).join("")+T(92,88,"cm")),
+lung:()=>v(`<ellipse cx="68" cy="66" rx="28" ry="28" fill="#f48fb1"/><ellipse cx="132" cy="66" rx="28" ry="28" fill="#f48fb1"/><path d="M100 8v36M100 44l-20 14M100 44l20 14" stroke-width="5"/>`+T(106,16,l("Trachea","Trakea"))+T(48,70,l("Lungs","Peparu"))),
+leaf:()=>v(`<circle cx="28" cy="24" r="13" fill="#fdd835"/><path d="M85 62q40-50 90 0q-40 30-90 0z" fill="#66bb6a"/><path d="M130 62v28" stroke="#6d4c41"/>`+T(6,52,l("Sunlight","Cahaya"))+T(138,94,"H₂O ↑")+T(80,22,"CO₂ ↓")+T(150,22,"O₂ ↑")),
+mirror:()=>v(`<path d="M50 80h100" stroke-width="6" stroke="#90a4ae"/><path d="M100 80V20" stroke-dasharray="4"/><path d="M55 25L100 80L145 25" stroke="#fb8c00"/>`+T(60,95,l("Reflection","Pantulan"))),
+refr:()=>v(`<rect x="10" y="50" width="180" height="46" fill="#81d4fa" opacity=".6"/><path d="M40 8L100 50L130 94" stroke="#fb8c00"/><path d="M100 50V10" stroke-dasharray="4"/>`+T(14,64,l("Water","Air"))+T(14,20,l("Air","Udara"))),
+shadow:()=>v(`<circle cx="22" cy="50" r="9" fill="#fdd835"/><path d="M22 50L170 11M22 50L170 89" stroke-dasharray="3" stroke="#fb8c00"/><rect x="80" y="35" width="10" height="30" fill="#8d6e63"/><rect x="168" y="11" width="5" height="78" fill="#555"/>`+T(40,96,l("Light · object · shadow","Cahaya · objek · bayang-bayang"))),
+sound:()=>v(`<path d="M10 50q15-40 30 0t30 0t30 0t30 0t30 0t30 0" stroke="#1e88e5" stroke-width="3"/>`+T(50,92,l("Vibration → sound","Getaran → bunyi"))),
+solar:()=>v(`<circle cx="26" cy="50" r="20" fill="#fdd835"/>`+[2,3,3,2.5,7,6,4,4].map((r,i)=>`<circle cx="${58+i*18}" cy="50" r="${r}" fill="${i==2?"#1e88e5":"#bdbdbd"}"/>`).join("")+T(8,86,l("Sun","Matahari"))+T(86,36,l("Earth","Bumi"))),
+lever:()=>v(`<path d="M100 90l-12-26h24z" fill="#a1887f"/><path d="M30 72L170 52" stroke-width="6"/><text x="12" y="70" font-size="18" stroke="none">🧒</text><text x="165" y="50" font-size="18" stroke="none">🧒</text>`+T(84,98,l("Lever","Tuas"))),
+ramp:()=>v(`<path d="M20 85L170 85L170 35z" fill="#bcaaa4"/><rect x="60" y="62" width="14" height="14" fill="#fb8c00" transform="rotate(-14 67 69)"/>`+T(50,97,l("Inclined plane","Satah condong")))};
+const DG={};[["ruler","0.1"],["lung","1.0 1.2 1.4"],["leaf","3.0 3.1 3.2 3.3 3.4 3.5 3.8"],["mirror","4.3 4.8"],["shadow","4.1 4.2 4.9"],["refr","4.6 4.7"],["sound","5.0 5.3 5.5"],["solar","8.0 8.1 8.2 8.4 8.5 8.6 8.7 8.9"],["lever","9.2 9.8 9.9"],["ramp","9.3"]].forEach(([k,s])=>s.split(" ").forEach(x=>DG[x]=k));
+function menu(){run=false;cv.style.display="none";$("p").innerHTML="";$("g").innerHTML=`<button onclick=lang()>${u("lang")}</button><button onclick=lb()>🏆 ${u("lb")}</button><h2>${u("ch")}</h2><div class=grid>`+D.map((d,i)=>`<button class=t onclick=start(${i})>${d[1]}<br><b>${i+1}. ${N[L][i]}</b>${best[i]!=null?`<br><small>${u("best")} ${best[i]}/10</small>`:""}</button>`).join("")+"</div>"}
+function lang(){L=L=="en"?"ms":"en";menu()}
+function ask(){const r=rw(S.t,S.q),k=DG[S.t+"."+S.q];S.o=sh([r[2],r[3],r[4]]);ar=null;stuck=null;$("g").innerHTML=`<div class=p><small>${N[L][S.t]} · ${u("qn")} ${S.q+1}/10 · ${u(S.q<3?"e":S.q<7?"m":"h")} · ✅ ${S.c} · 🎯 ${S.p}</small>${k?V[k]():`<div class=em>${r[0]}</div>`}<h2>${r[1]}</h2>${S.o.map((o,i)=>`<button class=o onclick=pick(${i},this)>${o}</button>`).join("")}</div>`}
+function pick(i,b){const r=rw(S.t,S.q),ok=S.o[i]==r[2];document.querySelectorAll(".o").forEach(x=>{x.disabled=true;if(x.textContent==r[2])x.classList.add("ok")});
+if(ok){S.c++;b.classList.add("ok");$("p").innerHTML=`<div class=p><b>${u("ok")}</b><br><button class=go id=sb onclick=shoot()>${u("shoot")}</button></div>`}
+else{b.classList.add("no");$("p").innerHTML=`<div class=p><b>${u("no")}${r[2]}</b><br><button class=go onclick=nxt()>${u("next")}</button></div>`}}
+function fin(){const b=best[S.t];if(b==null||S.c>b)best[S.t]=S.c;cv.style.display="none";$("p").innerHTML="";const s=S.c>=9?"🌟🌟🌟":S.c>=6?"🌟🌟":S.c>=3?"🌟":"💪";
+$("g").innerHTML=`<div class=p><div class=em>${s}</div><h2>${N[L][S.t]} ✔</h2><h2>${u("qs")}: ${S.c}/10</h2><h2>${u("ap")}: ${S.p}</h2><h2>⭐ ${S.c*10+S.p}/200</h2><p>${S.c>=8?u("g1"):S.c>=5?u("g2"):u("g3")}</p><input id=nm maxlength=14 style="padding:8px;border-radius:8px;border:2px solid var(--bd);background:var(--card);color:var(--fg)"><button class=go onclick=lbAdd()>🏆 ${u("sv")}</button><br><button onclick=start(${S.t})>${u("again")}</button><button onclick=menu()>${u("all")}</button></div>`;
+$("nm").placeholder=u("nm");try{$("nm").value=localStorage.getItem("asy4n")||""}catch(x){}}
+function lbGet(){try{return JSON.parse(localStorage.getItem("asy4lb")||"[]")}catch(x){return[]}}
+function lbAdd(){const n=($("nm").value.trim()||"?").slice(0,14),a=lbGet();a.push({n,t:S.t,s:S.c*10+S.p});a.sort((x,y)=>y.s-x.s);try{localStorage.setItem("asy4n",n);localStorage.setItem("asy4lb",JSON.stringify(a.slice(0,200)))}catch(x){}lb(S.t)}
+function lb(t){cv.style.display="none";$("p").innerHTML="";const a=lbGet().filter(x=>t==null||x.t==t).slice(0,10);
+$("g").innerHTML=`<div class=p><h2>🏆 ${u("lb")}${t==null?"":" · "+N[L][t]}</h2>`+(a.length?"<table style='margin:auto;text-align:left;border-spacing:10px 4px'>"+a.map((x,i)=>`<tr><td>${["🥇","🥈","🥉"][i]||i+1}</td><td>${e(x.n)}</td><td><small>${t==null?N[L][x.t]:""}</small></td><td><b>${x.s}</b></td></tr>`).join("")+"</table>":`<p>${u("none")}</p>`)+`<p><small>${u("note")}</small></p><button class=go onclick=menu()>${u("back")}</button></div>`}
+menu();
+</script></body></html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sains Goal! Year 5</title>
+<style>
+:root{--bg:#f4f8f2;--fg:#17301c;--card:#fff;--ac:#1f8a3b;--bd:#cfe3d0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10190f;--fg:#e6f2e4;--card:#1b2a1a;--ac:#4cc46a;--bd:#2f4a2e}}
+:root[data-theme="dark"]{--bg:#10190f;--fg:#e6f2e4;--card:#1b2a1a;--ac:#4cc46a;--bd:#2f4a2e}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Segoe UI",sans-serif}
+#app{max-width:520px;margin:0 auto;padding:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{font-size:20px;margin:6px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 12px}
+button.p{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g button{text-align:left}
+.opt{display:block;width:100%;margin:6px 0;text-align:left}
+.ok{background:#2e9d4a!important;color:#fff!important}.no{background:#d0463b!important;color:#fff!important}
+.big{font-size:56px;text-align:center;line-height:1.1}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--bd)}
+svg{max-width:100%;height:auto;display:block;margin:0 auto}svg text{fill:var(--fg);font-size:9px}
+canvas{width:100%;max-width:420px;display:block;margin:6px auto;border-radius:12px}
+table{width:100%;border-collapse:collapse}td,th{padding:5px 4px;border-bottom:1px solid var(--bd);text-align:left;font-size:14px}
+input{font:inherit;padding:9px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg);width:100%;margin:6px 0}
+</style></head><body><div id="app"></div>
+<script>
+// Each question: [emoji, EN question, BM question, correct "EN|BM", wrong1, wrong2]. Options are shuffled at play time.
+const T=[
+{e:"🔬",n:"Scientific Skills|Kemahiran Saintifik",q:[
+["👀","Using our five senses to collect information is called…","Menggunakan pancaindera untuk mengumpul maklumat dipanggil…","Observing|Memerhati","Predicting|Meramal","Measuring|Mengukur"],
+["⚖️","Which tool measures the mass of an object?","Alat manakah menyukat jisim objek?","Beam balance|Neraca alur","Ruler|Pembaris","Stopwatch|Jam randik"],
+["⏱️","A stopwatch measures time in…","Jam randik menyukat masa dalam…","Seconds|Saat","Kilograms|Kilogram","Metres|Meter"],
+["🧪","In a fair test, the variable you change on purpose is the…","Dalam ujian adil, pemboleh ubah yang sengaja diubah ialah…","Manipulated variable|Pemboleh ubah dimanipulasikan","Responding variable|Pemboleh ubah bergerak balas","Constant variable|Pemboleh ubah dimalarkan"],
+["🌻","“Plants with more sunlight grow taller.” This statement is a…","“Tumbuhan yang mendapat lebih cahaya tumbuh lebih tinggi.” Pernyataan ini ialah…","Hypothesis|Hipotesis","Conclusion|Kesimpulan","Observation|Pemerhatian"],
+["📊","A bar chart is used to…","Carta palang digunakan untuk…","Present data|Mempersembahkan data","Measure mass|Menyukat jisim","Heat water|Memanaskan air"],
+["📏","The responding variable is what you…","Pemboleh ubah bergerak balas ialah apa yang anda…","Measure or observe|Sukat atau perhatikan","Keep the same|Malarkan","Change on purpose|Ubah dengan sengaja"],
+["🧠","To test which fertiliser is best, what must be kept the same?","Untuk menguji baja terbaik, apakah yang mesti dimalarkan?","Amount of water|Kuantiti air","Type of fertiliser|Jenis baja","Height of plant|Ketinggian pokok"]]},
+{e:"🦴",n:"Humans|Manusia",q:[
+["🦴","Which is a function of the skeleton?","Apakah fungsi rangka?","Supports the body|Menyokong badan","Pumps blood|Mengepam darah","Digests food|Menghadam makanan"],
+["💀","The skull protects the…","Tengkorak melindungi…","Brain|Otak","Heart|Jantung","Lungs|Peparu"],
+["🫁","The ribs protect the…","Tulang rusuk melindungi…","Heart and lungs|Jantung dan peparu","Brain|Otak","Stomach|Perut"],
+["❤️","Which organ pumps blood around the body?","Organ manakah mengepam darah ke seluruh badan?","Heart|Jantung","Lungs|Peparu","Stomach|Perut"],
+["🩸","Blood carries ___ to all parts of the body.","Darah membawa ___ ke seluruh badan.","Oxygen and nutrients|Oksigen dan nutrien","Only water|Air sahaja","Only carbon dioxide|Karbon dioksida sahaja"],
+["💪","A joint is found…","Sendi terdapat…","Between two bones|Di antara dua tulang","Inside the heart|Di dalam jantung","Inside the lungs|Di dalam peparu"],
+["🏃","After running fast, your heartbeat and breathing rate…","Selepas berlari laju, kadar denyutan jantung dan pernafasan…","Increase|Meningkat","Decrease|Menurun","Stay the same|Tidak berubah"],
+["🔗","Which two systems work together to deliver oxygen to the muscles?","Dua sistem manakah bekerjasama menghantar oksigen ke otot?","Respiratory and circulatory|Pernafasan dan peredaran darah","Skeletal and digestive|Rangka dan pencernaan","Skeletal and excretory|Rangka dan perkumuhan"]]},
+{e:"🐾",n:"Animals|Haiwan",q:[
+["🐔","A hen reproduces by…","Ayam membiak dengan cara…","Laying eggs|Bertelur","Giving birth|Melahirkan anak","Splitting|Membelah diri"],
+["🐄","A cow reproduces by…","Lembu membiak dengan cara…","Giving birth|Melahirkan anak","Laying eggs|Bertelur","Budding|Bertunas"],
+["🦎","A chameleon changes colour to…","Sesumpah menukar warna untuk…","Hide from enemies|Bersembunyi daripada musuh","Find water|Mencari air","Make friends|Mencari kawan"],
+["🦔","A hedgehog curls into a ball to…","Landak mengerekot menjadi bulat untuk…","Protect itself|Melindungi diri","Swim|Berenang","Sleep|Tidur"],
+["🐻","Why do some animals hibernate?","Mengapakah sesetengah haiwan berhibernasi?","Survive when food is scarce|Bertahan apabila makanan kurang","To hunt at night|Untuk memburu pada waktu malam","To play|Untuk bermain"],
+["🦁","Animals that care for their young give them…","Haiwan yang menjaga anaknya memberikan anak…","A better chance of survival|Peluang hidup yang lebih baik","Fewer friends|Kurang kawan","More enemies|Lebih banyak musuh"],
+["🐪","A camel stores fat in its hump to…","Unta menyimpan lemak dalam bonggolnya untuk…","Survive with little food and water|Bertahan dengan sedikit makanan dan air","Float on water|Terapung di air","Fly|Terbang"],
+["🦌","Why do some animals migrate?","Mengapakah sesetengah haiwan berhijrah?","To find food and a suitable climate|Untuk mencari makanan dan iklim sesuai","To change colour|Untuk menukar warna","To lay fewer eggs|Untuk bertelur kurang"]]},
+{e:"🌱",n:"Plants|Tumbuhan",q:[
+["🌱","Plants make their own food through…","Tumbuhan membuat makanan sendiri melalui…","Photosynthesis|Fotosintesis","Digestion|Pencernaan","Hibernation|Hibernasi"],
+["🍃","Which gas do plants take in for photosynthesis?","Gas manakah diambil tumbuhan untuk fotosintesis?","Carbon dioxide|Karbon dioksida","Oxygen|Oksigen","Nitrogen|Nitrogen"],
+["🌳","Which part absorbs water from the soil?","Bahagian manakah menyerap air dari tanah?","Roots|Akar","Leaves|Daun","Flowers|Bunga"],
+["🥥","Coconut seeds are dispersed by…","Biji benih kelapa disebarkan oleh…","Water|Air","Wind|Angin","Explosion|Letupan"],
+["🪁","Dandelion seeds are dispersed by…","Biji benih dandelion disebarkan oleh…","Wind|Angin","Water|Air","Animals|Haiwan"],
+["🐒","Rambutan seeds are dispersed by…","Biji benih rambutan disebarkan oleh…","Animals|Haiwan","Wind|Angin","Water|Air"],
+["🌵","A cactus has thick stems and spines to…","Kaktus mempunyai batang tebal dan duri untuk…","Reduce water loss|Mengurangkan kehilangan air","Catch insects|Menangkap serangga","Attract bees|Menarik lebah"],
+["🌑","A plant kept in a dark cupboard turns pale because…","Pokok di dalam almari gelap menjadi pucat kerana…","It cannot photosynthesise|Ia tidak dapat melakukan fotosintesis","It gets too much water|Ia mendapat terlalu banyak air","It is too warm|Ia terlalu panas"]]},
+{e:"⚡",n:"Electricity|Elektrik",q:[
+["🔋","A battery is a…","Bateri ialah…","Source of electricity|Sumber elektrik","Conductor only|Pengalir sahaja","Switch|Suis"],
+["💡","For a bulb to light up, the circuit must be…","Untuk mentol menyala, litar mesti…","Complete|Lengkap","Broken|Terputus","Empty|Kosong"],
+["🔌","Which material is a good conductor of electricity?","Bahan manakah pengalir elektrik yang baik?","Copper|Kuprum","Plastic|Plastik","Rubber|Getah"],
+["🧤","Electric wires are covered with plastic because plastic is an…","Wayar elektrik disaluti plastik kerana plastik ialah…","Insulator|Penebat","Conductor|Pengalir","Battery|Bateri"],
+["🔦","A switch is used to…","Suis digunakan untuk…","Open or close the circuit|Membuka atau menutup litar","Make electricity|Menghasilkan elektrik","Make the bulb hot|Memanaskan mentol"],
+["💡","In a series circuit, if one bulb is removed, the other bulbs…","Dalam litar bersiri, jika satu mentol dikeluarkan, mentol lain…","Go off|Padam","Become brighter|Menjadi lebih cerah","Stay on|Terus menyala"],
+["🔋","Adding more batteries in series makes the bulb…","Menambah bateri secara bersiri menjadikan mentol…","Brighter|Lebih cerah","Dimmer|Lebih malap","Go off|Padam"],
+["🏠","House lights are wired in parallel so that…","Lampu rumah disambung selari supaya…","Each light works on its own|Setiap lampu berfungsi sendiri","All lights go off together|Semua lampu padam serentak","No switch is needed|Suis tidak diperlukan"]]},
+{e:"🌡️",n:"Heat and Temperature|Haba dan Suhu",q:[
+["🌡️","Which instrument measures temperature?","Alat manakah menyukat suhu?","Thermometer|Termometer","Ruler|Pembaris","Stopwatch|Jam randik"],
+["☀️","The standard unit of temperature is…","Unit piawai suhu ialah…","Degree Celsius (°C)|Darjah Celsius (°C)","Kilogram (kg)|Kilogram (kg)","Metre (m)|Meter (m)"],
+["🔥","Heat is a form of…","Haba ialah satu bentuk…","Energy|Tenaga","Matter|Jirim","Force|Daya"],
+["☕","When hot water cools to room temperature, its temperature…","Apabila air panas disejukkan ke suhu bilik, suhunya…","Decreases|Menurun","Increases|Meningkat","Stays the same|Tidak berubah"],
+["🥄","Which is the best conductor of heat?","Yang manakah pengalir haba terbaik?","Metal spoon|Sudu logam","Wooden spoon|Sudu kayu","Plastic spoon|Sudu plastik"],
+["🧊","Temperature tells us how ___ an object is.","Suhu memberitahu betapa ___ sesuatu objek.","Hot or cold|Panas atau sejuk","Heavy|Berat","Long|Panjang"],
+["🍳","Pot handles are made of plastic or wood because they are…","Pemegang periuk diperbuat daripada plastik atau kayu kerana ia…","Poor conductors of heat|Pengalir haba yang lemah","Good conductors of heat|Pengalir haba yang baik","Heavier|Lebih berat"],
+["🥤","Ice cubes are put in water at 30°C. The water’s temperature falls because…","Ais dimasukkan ke dalam air 30°C. Suhu air menurun kerana…","Water loses heat to the ice|Air kehilangan haba kepada ais","Ice gives heat to water|Ais memberi haba kepada air","Water gains heat|Air menerima haba"]]}
+];
+const D=[
+()=>`<svg viewBox="0 0 160 80" width="200"><path d="M55 10v50q0 12 25 12t25-12V10z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M57 40v20q0 10 23 10t23-10V40z" fill="#4aa3df" opacity=".6"/><text x="80" y="8" text-anchor="middle">${t("Beaker|Bikar")}</text></svg>`,
+()=>`<svg viewBox="0 0 170 130" width="220"><circle cx="85" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="3"/><path d="M85 27v45M62 38q23-8 46 0M60 48q25-8 50 0M62 58q23-8 46 0" fill="none" stroke="currentColor" stroke-width="3"/><path d="M62 38l-18 22 8 20M108 38l18 22-8 20M85 72l-14 30v22M85 72l14 30v22" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="44" cy="60" r="4" fill="#e8a33d"/><circle cx="71" cy="102" r="4" fill="#e8a33d"/><text x="100" y="12">${t("Skull|Tengkorak")}</text><text x="112" y="50">${t("Ribs|Tulang rusuk")}</text><text x="2" y="58">${t("Joint|Sendi")}</text><text x="105" y="102">${t("Joint (knee)|Sendi (lutut)")}</text></svg>`,
+()=>`<div class="big">🐾</div>`,
+()=>`<svg viewBox="0 0 200 110" width="260"><circle cx="30" cy="25" r="14" fill="#f5c542"/><text x="30" y="52" text-anchor="middle">${t("Sunlight|Cahaya matahari")}</text><ellipse cx="110" cy="55" rx="42" ry="20" fill="#3fa34d"/><path d="M110 75v30" stroke="#7a5230" stroke-width="5"/><path d="M48 30l30 14" stroke="#f5c542" stroke-width="3"/><text x="75" y="12">CO₂ ↓</text><text x="150" y="30">O₂ ↑</text><text x="125" y="104">${t("Water ↑ (roots)|Air ↑ (akar)")}</text><text x="110" y="58" text-anchor="middle" fill="#fff" style="fill:#fff">${t("Leaf|Daun")}</text></svg>`,
+()=>`<svg viewBox="0 0 200 110" width="260"><rect x="25" y="25" width="150" height="65" rx="6" fill="none" stroke="currentColor" stroke-width="3"/><rect x="20" y="48" width="10" height="20" fill="#e8a33d"/><circle cx="100" cy="25" r="12" fill="#f5e04a" stroke="currentColor" stroke-width="2"/><path d="M130 90l22-14" stroke="currentColor" stroke-width="3"/><text x="2" y="44">${t("Battery|Bateri")}</text><text x="78" y="12">${t("Bulb|Mentol")}</text><text x="125" y="104">${t("Switch|Suis")}</text></svg>`,
+()=>`<svg viewBox="0 0 130 130" width="150"><rect x="52" y="6" width="16" height="85" rx="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="60" cy="102" r="16" fill="#d0463b"/><rect x="56" y="30" width="8" height="70" fill="#d0463b"/><path d="M72 22h12M72 38h12M72 54h12M72 70h12" stroke="currentColor" stroke-width="2"/><text x="88" y="25">100°C</text><text x="88" y="58">50°C</text><text x="88" y="74">0°C</text><text x="2" y="124">${t("Thermometer|Termometer")}</text></svg>`
+];
+let L=0,S,view=menu,aiming=false,raf=0;
+const $=s=>document.querySelector(s),t=s=>s.split("|")[L],app=$("#app");
+const ST=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}};
+function head(){return `<header><h1>⚽ ${t("Sains Goal! Year 5|Sains Goal! Tahun 5")}</h1><button onclick="L=1-L;view()">${L?"English":"Bahasa Melayu"}</button></header>`}
+function menu(){view=menu;
+app.innerHTML=head()+`<p>${t("Pick a topic. Answer correctly to earn a penalty shot!|Pilih topik. Jawab dengan betul untuk dapat sepakan penalti!")}</p><div class="g">${T.map((o,i)=>`<button onclick="start(${i})"><div class="big" style="font-size:34px;text-align:left">${o.e}</div><b>${t(o.n)}</b><br><small>8 ${t("questions|soalan")}</small></button>`).join("")}</div><button class="opt" onclick="board()">🏆 ${t("Leaderboard|Papan Pendahulu")}</button>`}
+function start(i){S={t:i,q:0,c:0,g:0,o:null};ask()}
+function ask(){view=ask;const q=T[S.t].q[S.q];if(!S.o)S.o=[0,1,2].sort(()=>Math.random()-.5);
+const lv=S.q<3?t("Easy|Mudah"):S.q<6?t("Medium|Sederhana"):t("Hard|Sukar");
+app.innerHTML=head()+`<div class="card"><span class="tag">${t(T[S.t].n)}</span> <span class="tag">${S.q+1}/8 · ${lv}</span> <span class="tag">⚽ ${S.g} · ✔ ${S.c}</span>
+${S.q%2==0||S.t==2?D[S.t]():""}<div class="big">${q[0]}</div><p><b>${L?q[2]:q[1]}</b></p>
+<div id="opts">${S.o.map(k=>`<button class="opt" onclick="ans(${k},this)">${t(q[3+k])}</button>`).join("")}</div><div id="fb"></div></div>`}
+function ans(k,b){const ok=k==0;document.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+const q=T[S.t].q[S.q];b.classList.add(ok?"ok":"no");
+if(ok){S.c++;$("#fb").innerHTML=`<p>✅ ${t("Correct! Take your shot!|Betul! Buat sepakan anda!")}</p><canvas id="cv" width="320" height="200"></canvas><button class="p opt" id="sb" onclick="shoot()">⚽ ${t("SHOOT!|SEPAK!")}</button>`;aiming=true;aimLoop()}
+else{document.querySelectorAll(".opt").forEach(x=>{if(x.textContent==t(q[3]))x.classList.add("ok")});$("#fb").innerHTML=`<p>❌ ${t("Not quite. The answer is shown in green.|Belum tepat. Jawapan ditunjukkan dengan hijau.")}</p><button class="p opt" onclick="next()">${t("Next|Seterusnya")} ➜</button>`}}
+function draw(mx,bx,by,kx){const c=$("#cv");if(!c)return;const x=c.getContext("2d");x.fillStyle="#2e9d4a";x.fillRect(0,0,320,200);x.fillStyle="#37ad54";for(let i=0;i<8;i++)if(i%2)x.fillRect(0,i*25,320,25);
+x.fillStyle="rgba(255,255,255,.18)";x.fillRect(50,30,220,70);x.strokeStyle="#fff";x.lineWidth=4;x.strokeRect(50,30,220,70);x.lineWidth=1;for(let i=60;i<270;i+=12){x.beginPath();x.moveTo(i,30);x.lineTo(i,100);x.stroke()}
+x.font="30px serif";x.textAlign="center";x.fillText("🧤",kx,92);
+if(mx!=null){x.strokeStyle="#ffe14d";x.lineWidth=3;x.beginPath();x.arc(mx,65,12,0,7);x.moveTo(mx-18,65);x.lineTo(mx+18,65);x.moveTo(mx,47);x.lineTo(mx,83);x.stroke()}
+x.font="26px serif";x.fillText("⚽",bx??160,by??185)}
+function aimLoop(){if(!aiming)return;S.aim=160+95*Math.sin(performance.now()/420);draw(S.aim,160,185,160);raf=requestAnimationFrame(aimLoop)}
+function shoot(){if(!aiming)return;aiming=false;cancelAnimationFrame(raf);$("#sb").disabled=true;
+const kt=[100,160,220][Math.floor(Math.random()*3)],ax=S.aim,t0=performance.now();
+(function f(n){const p=Math.min(1,(n-t0)/700);draw(null,160+(ax-160)*p,185-120*p,160+(kt-160)*Math.min(1,p*1.6));
+if(p<1)return requestAnimationFrame(f);const g=Math.abs(ax-kt)>38;if(g)S.g++;
+$("#sb").outerHTML=`<p><b>${g?"🥅 GOAL! ⚽":"🧤 "+t("Saved by the keeper!|Ditepis penjaga gol!")}</b></p><button class="p opt" onclick="next()">${t("Next|Seterusnya")} ➜</button>`})(t0)}
+function next(){S.q++;S.o=null;S.q<8?ask():end()}
+function end(){view=end;const pts=S.c*10+S.g*5;
+app.innerHTML=head()+`<div class="card"><div class="big">${S.c>=7?"🏆":S.c>=4?"🌟":"💪"}</div><h2>${t(T[S.t].n)}</h2><p>✔ ${t("Correct answers|Jawapan betul")}: <b>${S.c}/8</b><br>🥅 ${t("Goals|Gol")}: <b>${S.g}</b><br>⭐ ${t("Points|Mata")}: <b>${pts}</b></p>
+<input id="nm" maxlength="16" placeholder="${t("Your name|Nama anda")}"><button class="p opt" onclick="save(${pts})">🏆 ${t("Save to leaderboard|Simpan ke papan pendahulu")}</button><button class="opt" onclick="start(${S.t})">🔁 ${t("Play again|Main semula")}</button><button class="opt" onclick="menu()">☰ ${t("Topics|Topik")}</button></div>`}
+function save(p){const n=($("#nm").value||"Murid").slice(0,16),a=ST("sg5");a.push({n,p,c:S.c,g:S.g,t:S.t});a.sort((x,y)=>y.p-x.p);try{localStorage.setItem("sg5",JSON.stringify(a.slice(0,50)))}catch(e){}board()}
+function board(){view=board;const a=ST("sg5").slice(0,10);
+app.innerHTML=head()+`<div class="card"><h2>🏆 ${t("Leaderboard|Papan Pendahulu")}</h2>${a.length?`<table><tr><th>#</th><th>${t("Name|Nama")}</th><th>${t("Topic|Topik")}</th><th>⭐</th></tr>${a.map((r,i)=>`<tr><td>${i+1}</td><td>${r.n.replace(/[<>&]/g,"")}</td><td>${T[r.t].e}</td><td>${r.p}</td></tr>`).join("")}</table>`:`<p>${t("No scores yet. Be the first!|Belum ada skor. Jadilah yang pertama!")}</p>`}<small>${t("Scores are saved on this device.|Skor disimpan pada peranti ini.")}</small></div><button class="opt" onclick="menu()">☰ ${t("Topics|Topik")}</button>`}
+menu();
+</script></body></html>
